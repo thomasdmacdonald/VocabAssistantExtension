@@ -14,22 +14,26 @@ function replaceFromArray(words){
 }
 
 function replace(words){
-    let elements = document.getElementsByTagName('*');
-    for(let i = 0; i < elements.length; i++){
-        let element = elements[i];
-        for(let j = 0; j < element.childNodes.length; j++){
-            let node = element.childNodes[j];
-            if(node.nodeType === 3){
-                let text = node.textContent;
-                console.log(text);
-                for(let pair of words) {
-                    let regex = new RegExp(pair[0], 'gi');
-                    text = text.replace(regex, pair[1]);
-                }
-                element.replaceChild(document.createTextNode(text), node);
-            }
+    let nodes = getTextNodes();
+    for(let node of nodes){
+        let text = node.nodeValue;
+        for(let pair of words) {
+            let regex = new RegExp('\\b'+pair[0]+'\\b', 'gi');
+            text = text.replace(regex, pair[1]);
         }
+        node.nodeValue = text;
     }
+}
+
+function getTextNodes(){
+    let treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    let textNodes = [];
+    while(node = treeWalker.nextNode()) {
+        textNodes.push(node);
+    }
+
+    return textNodes;
 }
 
 function add_vocab(vocab, translation){
