@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+
+  "name": "Replace: Korean Vocab Learning Tool",
+  "description": "Replaces entered words with korean translations",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "images/hangul_128.png",
+    "default_popup": "popup.html",
+    "default_title": "Modify Dictionary"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "vocabulary.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "permissions": [
+    "storage"
+  ],
+
+  "icons": {
+    "128": "images/hangul_128.png",
+    "48": "images/hangul_48.png",
+    "16": "images/hangul_16.png"
+  }
+
+}
