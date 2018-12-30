@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Replace: Korean Vocab Learning Tool",
-  "description": "Replaces entered words with korean translations",
+  "description": "Replaces chosen words with user specified translations",
   "version": "1.0",
 
   "browser_action": {

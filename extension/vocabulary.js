@@ -58,4 +58,3 @@ function add_vocab(vocab, translation){
         replaceFromArray(newWords);
     });
 }
-
