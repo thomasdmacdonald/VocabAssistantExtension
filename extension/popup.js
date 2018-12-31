@@ -13,25 +13,40 @@ document.addEventListener('DOMContentLoaded', function() {
         let eng = eng_input.value;
         let kor = kor_input.value;
 
-        addTextBox(eng, kor);
-
-        let parameters = {
-            active: true,
-            //take this out to get all active tabs?
-            currentWindow: true
-        };
-
-        chrome.tabs.query(parameters, send);
-
-        function send(tabs) {
-            for (let tab of tabs) {
-                //0 parameter denotes an add action
-                chrome.tabs.sendMessage(tab.id, [eng, kor, 0]);
+        if(eng !== ' ' && eng !== '' && eng !== '~' && kor !== ' ' && kor !== '' && kor !== '~') {
+            let divide = document.getElementById("vocab");
+            let nodes = divide.childNodes;
+            let newTerm = true;
+            for(let i = 0; i < nodes.length; i++){
+                if(nodes[i].childNodes[0].value === eng){
+                    removeVocab(eng, nodes[i].childNodes[1].value);
+                    nodes[i].childNodes[1].value = kor;
+                    newTerm = false;
+                }
             }
-        }
 
-        document.getElementById('eng_input').value = "";
-        document.getElementById('kor_input').value = "";
+            if(newTerm) {
+                addTextBox(eng, kor);
+            }
+
+            let parameters = {
+                active: true,
+                //take this out to get all active tabs?
+                currentWindow: true
+            };
+
+            chrome.tabs.query(parameters, send);
+
+            function send(tabs) {
+                for (let tab of tabs) {
+                    //0 parameter denotes an add action
+                    chrome.tabs.sendMessage(tab.id, [eng, kor, 0]);
+                }
+            }
+
+            document.getElementById('eng_input').value = "";
+            document.getElementById('kor_input').value = "";
+        }
 
     });
 });
@@ -44,6 +59,7 @@ function addTextBox(vocab, trans){
     english.size = "22";
 
     let korean = document.createElement("input");
+    korean.readOnly = true;
     korean.value = trans;
     korean.className = "koreanText";
     korean.size = "12";
@@ -57,6 +73,11 @@ function addTextBox(vocab, trans){
     divide.appendChild(english);
     divide.appendChild(korean);
     divide.appendChild(remove);
+
+    remove.addEventListener('click', function() {
+        removeVocab(vocab, trans);
+        divide.parentNode.removeChild(divide);
+    });
 
     let element = document.getElementById("vocab");
     element.appendChild(divide);
@@ -76,6 +97,12 @@ function constructTextBoxes(){
                 //display something to tell user to open popup in a page
             }
         });
+    });
+}
+
+function removeVocab(vocab, trans){
+    chrome.tabs.query({active: true, currentWindow: true}, function(tab){
+        chrome.tabs.sendMessage(tab[0].id, [vocab, trans, 1]);
     });
 }
 

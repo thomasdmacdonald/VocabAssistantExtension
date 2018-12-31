@@ -3,6 +3,7 @@ replaceFromStorage();
 prepareVocab();
 
 let vocabWords = [];
+let removedWords = [];
 let tempVocab;
 let useTemp = false;
 
@@ -18,6 +19,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
                 }
                 useTemp = false;
             }
+            removeVocabWords();
             sendResponse({list: vocabWords});
         }
         else{
@@ -25,6 +27,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
                 vocabWords = tempVocab;
                 useTemp = false;
             }
+            removeVocabWords();
             sendResponse({list: vocabWords});
         }
     }
@@ -40,6 +43,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
         }
         add_vocab(message[0], message[1]);
     }
+
+    //remove a word
+    if (typeof message === 'object' && message.length === 3 && message[2] === 1) {
+        remove_vocab(message[0]);
+        removedWords.push(message[1]);
+    }
 });
 
 function setVocabWords(words){
@@ -50,4 +59,15 @@ function prepareVocab(){
     chrome.storage.local.get(['~'], function(words){
         setVocabWords(words['~']);
     });
+}
+
+function removeVocabWords(){
+    for(let element of removedWords) {
+        for (let i = 0; i < vocabWords.length; i++) {
+            if (vocabWords[i][1] === element) {
+                vocabWords.splice(i, 1);
+            }
+        }
+    }
+    removedWords = [];
 }
