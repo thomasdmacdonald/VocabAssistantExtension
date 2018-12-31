@@ -2,33 +2,73 @@
 <html lang="en">
 <head>
     <style>
-        .button{
-            background-color: #FF775B;
-            border: black;
+        .buttonAdd{
+            background-color: ghostwhite;
+            border-color: #74b660;
             border-radius: 7px;
-            color: white;
-            padding: 2px 15px;
+            //color: #B6FF60;
+            color: #74b660;
+            padding: 1px 5px;
             font-size: 14px;
             text-align: center;
             white-space: nowrap;
             outline: none;
+            font-weight: bold;
+        }
+
+        .buttonRemove{
+            background-color: ghostwhite;
+            border-color: #fa2742;
+            border-radius: 40px;
+            color: #fa2742;
+            padding: 1px 0.315em 1px;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            outline: none;
+            font-weight: bold;
+            margin-left: 4px;
         }
 
         .textbox1{
+            background-color: ghostwhite;
+            border-color: #344983;
             border-radius: 7px;
             white-space: nowrap;
             outline: none;
         }
 
-        .textbox2{
+        .englishText{
             border-radius: 3px;
-            padding-top: 10px;
+            padding: 5px 9px 5px 7px;
             border: none;
             outline: none;
+            font-family: "Helvetica";
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .koreanText{
+            border-radius: 7px;
+            white-space: nowrap;
+            outline: none;
+            font-family: "Helvetica";
+            background-color: ghostwhite;
+        }
+
+        .line{
+            border-top: 1px solid lightgrey ;
+            margin-right: 1px;
+            margin-left: 1px;
         }
 
         div.container{
-            width: 275px;
+            width: 322px;
+        }
+
+        div.wordHolder{
+            overflow-y: auto;
+            max-height: 300px;
         }
     </style>
     <meta charset="UTF-8">
@@ -36,10 +76,11 @@
     <script type="text/javascript" src="popup.js"></script>
 </head>
 <body>
-<div class="container"></div>
-<input class="textbox1" id="eng_input" size="15">
-<input class="textbox1" id="kor_input" size="15">
-<button id="add" class="button" type="button">Add New Vocab</button>
-<div id="vocab"></div>
+    <div class="container"></div>
+        <input class="textbox1" id="eng_input" size="15" placeholder="   Input English Text">
+        <input class="textbox1" id="kor_input" size="15" placeholder="    Input Translation">
+        <button id="add" class="buttonAdd" type="button">+</button>
+    <hr class="line">
+    <div id="vocab" class="wordHolder"></div>
 </body>
 </html>
