@@ -3,6 +3,7 @@
 <head>
     <style>
         .buttonAdd{
+            //background-color: #F0F9DE;
             background-color: ghostwhite;
             border-color: #74b660;
             border-radius: 7px;
@@ -16,7 +17,21 @@
             font-weight: bold;
         }
 
+        .buttonRoman{
+            background-color: ghostwhite;
+            border-color: #f5b041;
+            border-radius: 7px;
+            color: #f5b041;
+            padding: 0.5px 2.5px 0.5px;
+            font-size: 13px;
+            text-align: center;
+            white-space: nowrap;
+            outline: none;
+            font-weight: bold;
+        }
+
         .buttonRemove{
+            //background-color: #FFE5E1;
             background-color: ghostwhite;
             border-color: #fa2742;
             border-radius: 40px;
@@ -63,7 +78,7 @@
         }
 
         div.container{
-            width: 322px;
+            width: 330px;
         }
 
         div.wordHolder{
@@ -80,6 +95,7 @@
         <input class="textbox1" id="eng_input" size="15" placeholder="   Input English Text">
         <input class="textbox1" id="kor_input" size="15" placeholder="    Input Translation">
         <button id="add" class="buttonAdd" type="button">+</button>
+        <button id="roman" class="buttonRoman" type="button">ㅎ</button>
     <hr class="line">
     <div id="vocab" class="wordHolder"></div>
 </body>
