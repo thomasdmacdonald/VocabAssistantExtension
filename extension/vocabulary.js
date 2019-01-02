@@ -1,3 +1,6 @@
+/**
+ * Replace words on page, using the words currently in storage
+ */
 function replaceFromStorage(){
     chrome.storage.local.get('~', function(result) {
         let words = result['~'];
@@ -7,12 +10,20 @@ function replaceFromStorage(){
     });
 }
 
+/**
+ * Replace words on page based on the arguement
+ * @param words words to be replaced on page
+ */
 function replaceFromArray(words){
     if(words !== []) {
         replace(words);
     }
 }
 
+/**
+ * Replace given words on page
+ * @param words words to be replaced
+ */
 function replace(words){
     let nodes = getTextNodes();
     for(let node of nodes){
@@ -25,6 +36,10 @@ function replace(words){
     }
 }
 
+/**
+ * Replace a pair of words, where the first word is Korean
+ * @param pair  A Korean and an English word
+ */
 function replaceKorean(pair){
     let nodes = getTextNodes();
     for(let node of nodes){
@@ -34,6 +49,10 @@ function replaceKorean(pair){
     }
 }
 
+/**
+ * Get all text nodes on a page
+ * @returns {Array} text nodes on the page
+ */
 function getTextNodes(){
     let treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     let node;
@@ -45,6 +64,11 @@ function getTextNodes(){
     return textNodes;
 }
 
+/**
+ * Add a word/translation pair to storage and then replace all instances of that word on the page
+ * @param vocab Vocab word
+ * @param translation   Korean translation
+ */
 function add_vocab(vocab, translation){
     chrome.storage.local.get(['~'], function(result){
         let words = result['~'];
@@ -76,6 +100,10 @@ function add_vocab(vocab, translation){
     });
 }
 
+/**
+ * Remove a word from the user's list
+ * @param vocab Word to be removed
+ */
 function remove_vocab(vocab){
     chrome.storage.local.get(['~'], function(result){
         let words = result['~'];
@@ -93,6 +121,9 @@ function remove_vocab(vocab){
     });
 }
 
+/**
+ * Remove all words from the user's list
+ */
 function removeAll(){
     chrome.storage.local.get(['~'], function(result){
         let words = result['~'];

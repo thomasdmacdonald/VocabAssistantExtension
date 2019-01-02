@@ -7,8 +7,14 @@ let removedWords = [];
 let tempVocab;
 let useTemp = false;
 
+/**
+ * Listen for messages from the popup
+ */
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
-    //if message is 0, set vocab words
+
+    /**
+     * Set the vocab words
+     */
     if(message.length === 1 && message[0] === 0){
         prepareVocab();
 
@@ -32,7 +38,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
         }
     }
 
-    //clear all
+    /**
+     * Clear all
+     */
     if(message.length === 1 && message[0] === 3){
         removeAll();
         chrome.storage.local.clear();
@@ -42,7 +50,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
         useTemp = false;
     }
 
-    //if message is an array and 0, add a word
+    /**
+     * Add a word
+     */
     if (typeof message === 'object' && message.length === 3 && message[2] === 0) {
         if(!useTemp) {
             tempVocab = [[message[0], message[1]]];
@@ -54,23 +64,35 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
         add_vocab(message[0], message[1]);
     }
 
-    //remove a word
+    /**
+     * Remove a Word
+     */
     if (typeof message === 'object' && message.length === 3 && message[2] === 1) {
         remove_vocab(message[0]);
         removedWords.push(message[1]);
     }
 });
 
+/**
+ * Set the vocabWords to the user's current list
+ * @param words current vocab words
+ */
 function setVocabWords(words){
     vocabWords = words;
 }
 
+/**
+ * Get user's words from storage and set them as the current vocab words
+ */
 function prepareVocab(){
     chrome.storage.local.get(['~'], function(words){
         setVocabWords(words['~']);
     });
 }
 
+/**
+ * Remove any words no longer needed from the list of vocab words
+ */
 function removeVocabWords(){
     for(let element of removedWords) {
         for (let i = 0; i < vocabWords.length; i++) {

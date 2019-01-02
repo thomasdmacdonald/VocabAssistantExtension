@@ -61,6 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+/**
+ * Add the necessary HTML elements for a vocab/translation pair
+ * @param vocab english vocab word
+ * @param trans Korena translation
+ */
 function addTextBox(vocab, trans){
     let english = document.createElement("input");
     english.value = vocab;
@@ -93,6 +98,9 @@ function addTextBox(vocab, trans){
     element.appendChild(divide);
 }
 
+/**
+ * Builds all needed HTMl elements for all words in vocab list
+ */
 function constructTextBoxes(){
     chrome.tabs.query({active: true, currentWindow: true}, function(tab){
         chrome.tabs.sendMessage(tab[0].id, [0], function(response){
@@ -110,6 +118,11 @@ function constructTextBoxes(){
     });
 }
 
+/**
+ * Removes a vocab word from the user's list
+ * @param vocab English vocab word
+ * @param trans Korean translation
+ */
 function removeVocab(vocab, trans){
     chrome.tabs.query({}, function(tabs){
         for (let tab of tabs) {
