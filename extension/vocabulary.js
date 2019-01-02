@@ -92,3 +92,14 @@ function remove_vocab(vocab){
         }
     });
 }
+
+function removeAll(){
+    chrome.storage.local.get(['~'], function(result){
+        let words = result['~'];
+        if(words !== undefined){
+            for(let i = 0; i < length; i++){
+                replaceKorean([words[i][1], words[i][0]]);
+            }
+        }
+    });
+}

@@ -1,5 +1,10 @@
 constructTextBoxes();
 
+// let parameters = {
+//     active: true,
+//     currentWindow: true
+// };
+
 /**
  * Listen for button presses
  */
@@ -7,6 +12,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('roman').addEventListener('click', function() {
         translate(document.getElementById('kor_input').value);
+    });
+
+    document.getElementById('clearAll').addEventListener('click', function(){
+        chrome.tabs.query({}, send);
+
+        function send(tabs) {
+            for (let tab of tabs) {
+                //0 parameter denotes an add action
+                chrome.tabs.sendMessage(tab.id, [3]);
+            }
+        }
     });
 
     document.getElementById('add').addEventListener('click', function() {
@@ -29,13 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 addTextBox(eng, kor);
             }
 
-            let parameters = {
-                active: true,
-                //take this out to get all active tabs?
-                currentWindow: true
-            };
-
-            chrome.tabs.query(parameters, send);
+            chrome.tabs.query({}, send);
 
             function send(tabs) {
                 for (let tab of tabs) {
@@ -101,8 +111,10 @@ function constructTextBoxes(){
 }
 
 function removeVocab(vocab, trans){
-    chrome.tabs.query({active: true, currentWindow: true}, function(tab){
-        chrome.tabs.sendMessage(tab[0].id, [vocab, trans, 1]);
+    chrome.tabs.query({}, function(tabs){
+        for (let tab of tabs) {
+            chrome.tabs.sendMessage(tab.id, [vocab, trans, 1]);
+        }
     });
 }
 
@@ -225,7 +237,7 @@ function parseSyllable(syl){
  * @returns {boolean}   whether the syllable is valid
  */
 function valid(string){
-    return /^((?:g)|(?:gg)|(?:n)|(?:d)|(?:dd)|(?:l)|(?:m)|(?:b)|(?:bb)|(?:s)|(?:ss)|(?:j)|(?:jj)|(?:ch)|(?:k)|(?:t)|(?:p)|(?:h))?((?:a)|(?:ae)|(?:ya)|(?:yae)|(?:eo)|(?:e)|(?:yeo)|(?:ye)|(?:o)|(?:wa)|(?:wae)|(?:oi)|(?:yo)|(?:u)|(?:oo)|(?:weo)|(?:we)|(?:wi)|(?:yu)|(?:yoo)|(?:eu)|(?:eui)|(?:i))((?:g)|(?:gg)|(?:gs)|(?:n)|(?:nj)|(?:nh)|(?:d)|(?:l)|(?:lg)|(?:lm)|(?:lb)|(?:ls)|(?:lt)|(?:lp)|(?:lh)|(?:m)|(?:b)|(?:bs)|(?:s)|(?:ss)|(?:ng)|(?:j)|(?:ch)|(?:k)|(?:t)|(?:p)|(?:h))?$/.test(string);
+    return /^((?:g)|(?:gg)|(?:r)|(?:n)|(?:d)|(?:dd)|(?:l)|(?:m)|(?:b)|(?:bb)|(?:s)|(?:ss)|(?:j)|(?:jj)|(?:ch)|(?:k)|(?:t)|(?:p)|(?:h))?((?:a)|(?:ae)|(?:ya)|(?:yae)|(?:eo)|(?:e)|(?:yeo)|(?:ye)|(?:o)|(?:wa)|(?:wae)|(?:oi)|(?:yo)|(?:u)|(?:oo)|(?:weo)|(?:we)|(?:wi)|(?:yu)|(?:yoo)|(?:eu)|(?:eui)|(?:i)|(?:ee))((?:g)|(?:gg)|(?:gs)|(?:n)|(?:nj)|(?:nh)|(?:d)|(?:l)|(?:r)|(?:lg)|(?:lm)|(?:lb)|(?:ls)|(?:lt)|(?:lp)|(?:lh)|(?:m)|(?:b)|(?:bs)|(?:s)|(?:ss)|(?:ng)|(?:j)|(?:ch)|(?:k)|(?:t)|(?:p)|(?:h))?$/.test(string);
 }
 
 /**
@@ -241,6 +253,7 @@ function decodeLetters(letters){
         'd': 3,
         'dd': 4,
         'l': 5,
+        'r': 5,
         'm': 6,
         'b': 7,
         'bb': 8,
@@ -278,7 +291,8 @@ function decodeLetters(letters){
         'yoo': 17,
         'eu': 18,
         'eui': 19,
-        'i': 20
+        'i': 20,
+        'ee': 20
     };
     let thirdLetter = {
         '': 0,
@@ -289,6 +303,7 @@ function decodeLetters(letters){
         'nj': 5,
         'nh': 6,
         'd': 7,
+        'r': 8,
         'l': 8,
         'lg': 9,
         'lm': 10,
@@ -297,6 +312,13 @@ function decodeLetters(letters){
         'lt': 13,
         'lp': 14,
         'lh': 15,
+        'rg': 9,
+        'rm': 10,
+        'rb': 11,
+        'rs': 12,
+        'rt': 13,
+        'rp': 14,
+        'rh': 15,
         'm': 16,
         'b': 17,
         'bs': 18,

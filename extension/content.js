@@ -1,4 +1,4 @@
-chrome.storage.local.clear();
+//chrome.storage.local.clear();
 replaceFromStorage();
 prepareVocab();
 
@@ -30,6 +30,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
             removeVocabWords();
             sendResponse({list: vocabWords});
         }
+    }
+
+    //clear all
+    if(message.length === 1 && message[0] === 3){
+        removeAll();
+        chrome.storage.local.clear();
+        vocabWords = [];
+        removedWords = [];
+        tempVocab = [];
+        useTemp = false;
     }
 
     //if message is an array and 0, add a word

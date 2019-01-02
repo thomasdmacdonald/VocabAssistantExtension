@@ -3,11 +3,9 @@
 <head>
     <style>
         .buttonAdd{
-            //background-color: #F0F9DE;
             background-color: ghostwhite;
             border-color: #74b660;
             border-radius: 7px;
-            //color: #B6FF60;
             color: #74b660;
             padding: 1px 5px;
             font-size: 14px;
@@ -30,8 +28,26 @@
             font-weight: bold;
         }
 
+        .buttonInfo{
+            background-color: white;
+            border-color: #94bcff;
+            border-width: 1px;
+            border-radius: 40px;
+            border-style: solid;
+            color: #94bcff;
+            margin-top: 5px;
+            padding: 0.5px 4px 0.5px 4px;
+            font-size: 8px;
+            text-align: center;
+            white-space: nowrap;
+            outline: none;
+            font-weight: bold;
+            top: 1px;
+            right: 3px;
+            position: absolute;
+        }
+
         .buttonRemove{
-            //background-color: #FFE5E1;
             background-color: ghostwhite;
             border-color: #fa2742;
             border-radius: 40px;
@@ -45,12 +61,45 @@
             margin-left: 4px;
         }
 
+        .buttonClear{
+            background-color: white;
+            color: slategrey;
+            font-size: 10px;
+            font-weight: lighter;
+            font-style: italic;
+            border-radius: 7px;
+            margin-left: 110px;
+            margin-top: 5px;
+            outline: none;
+        }
+
         .textbox1{
             background-color: ghostwhite;
             border-color: #344983;
             border-radius: 7px;
             white-space: nowrap;
             outline: none;
+        }
+
+        .smallText{
+            background-color: white;
+            color: slategrey;
+            padding: 0 5px 0 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: 8px;
+            font-weight: lighter;
+            font-style: italic;
+            border: none;
+            outline: none;
+        }
+
+        .hidden{
+            color: slategrey;
+            padding: 0 18px 0 0;
+            margin: 0 0 0 0;
+            font-style: italic;
+            font-weight: lighter;
         }
 
         .englishText{
@@ -77,6 +126,58 @@
             margin-left: 1px;
         }
 
+        .line2{
+            border-top: 1px solid lightgrey ;
+            margin-right: 1px;
+            margin-left: 1px;
+            margin-bottom: 0;
+            padding-bottom: 0;
+
+        }
+
+        .infoBox{
+            color: slategrey;
+            font-size: 10px;
+            font-style: italic;
+            font-weight: lighter;
+            padding: 0 0 0 0;
+            margin: 5px 0 0 0;
+        }
+
+
+        ul{
+            display: inline;
+            margin: 0 0 0 0;
+            padding: 0 0 0 0;
+        }
+        ul li.menu1{
+            display: inline;
+            margin: 0 0 0 0;
+            padding: 0 0 0 0;
+        }
+        ul li.menu1:hover ul.romanization{
+            display: block;
+        }
+        ul li.menu1 ul.romanization {
+            display: none;
+        }
+
+        ul li.menu2{
+            display: inline;
+            margin: 0 0 0 0;
+            padding: 0 0 0 0;
+        }
+        ul li.menu2:hover ul.info{
+            display: block;
+        }
+        ul li.menu2 ul.info {
+            display: none;
+        }
+
+        ul li ul li{
+            list-style-type: none;
+        }
+
         div.container{
             width: 330px;
         }
@@ -85,6 +186,7 @@
             overflow-y: auto;
             max-height: 300px;
         }
+
     </style>
     <meta charset="UTF-8">
     <title>Korean Vocab Assistant</title>
@@ -96,7 +198,98 @@
         <input class="textbox1" id="kor_input" size="15" placeholder="    Input Translation">
         <button id="add" class="buttonAdd" type="button">+</button>
         <button id="roman" class="buttonRoman" type="button">ㅎ</button>
+
     <hr class="line">
     <div id="vocab" class="wordHolder"></div>
+    <button id="clearAll" class="buttonClear" type="button">Click to clear all terms</button>
+
+    <div style="position: relative">
+    <hr class="line2">
+
+    <ul>
+        <li class="menu1">
+            <button class="smallText">Hover for romanization guide</button>
+            <ul class="romanization">
+                <li>
+                    <table style="width:100%">
+                        <tr>
+                            <th class="hidden">g  - ㄱ</th>
+                            <th class="hidden">gg - ㄲ</th>
+                            <th class="hidden">n  - ㄴ</th>
+                            <th class="hidden">d  - ㄷ</th>
+                            <th class="hidden">dd - ㄸ</th>
+                        </tr>
+                        <tr>
+                            <th class="hidden">l/r  - ㄹ</th>
+                            <th class="hidden">m  - ㅁ</th>
+                            <th class="hidden">b  - ㅂ</th>
+                            <th class="hidden">bb - ㅃ</th>
+                            <th class="hidden">s  - ㅅ</th>
+                        </tr>
+                        <tr>
+                            <th class="hidden">ss - ㅆ</th>
+                            <th class="hidden">ng - ㅇ</th>
+                            <th class="hidden">j  - ㅈ</th>
+                            <th class="hidden">jj - ㅉ</th>
+                            <th class="hidden">ch  - ㅊ</th>
+                        </tr>
+                        <tr>
+                            <th class="hidden">k   - ㅋ</th>
+                            <th class="hidden">t   - ㅌ</th>
+                            <th class="hidden">p   - ㅍ</th>
+                            <th class="hidden">h   - ㅎ</th>
+                            <th class="hidden">a   - ㅏ</th>
+                        </tr>
+                        <tr>
+                            <th class="hidden">ae  - ㅐ</th>
+                            <th class="hidden">ya  - ㅑ</th>
+                            <th class="hidden">yae - ㅒ</th>
+                            <th class="hidden">eo  - ㅓ</th>
+                            <th class="hidden">e   - ㅔ</th>
+                        </tr>
+                        <tr>
+                            <th class="hidden">yeo - ㅕ</th>
+                            <th class="hidden">ye  - ㅖ</th>
+                            <th class="hidden">o   - ㅗ</th>
+                            <th class="hidden">oi  - ᅬ</th>
+                            <th class="hidden">yo  - ᅭ</th>
+                        </tr>
+                        <tr>
+                            <th class="hidden">u/oo - ㅜ</th>
+                            <th class="hidden">weo - ᅯ</th>
+                            <th class="hidden">we  - ᅰ</th>
+                            <th class="hidden">wi  - ᅱ</th>
+                            <th class="hidden">yu/yoo - ㅠ</th>
+                        </tr>
+                        <tr>
+                            <th class="hidden">eu  - ㅡ</th>
+                            <th class="hidden">eui - ᅴ</th>
+                            <th class="hidden">i/ee - ㅣ</th>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+        </li>
+
+        <li class="menu2">
+            <button class="buttonInfo" type="button">i</button>
+            <ul class="info">
+                <li>
+                    <p class="infoBox">This chrome extension replaces words of your choice with translations you input.
+                        Type your original word into the left box, and translation into the right.
+                        To add a word to your translations, press the <span style="color: #74b660; font-style: normal; font-weight: normal">+</span> button.</p>
+                    <p class="infoBox">You may also type in romanized English in the left box and press the
+                        <span style="color: #f5b041; font-style: normal; font-weight: normal">ㅎ</span> button to convert to Korean text.
+                        Use a dash to separate syllables and spaces to separate words. Any invalid syllables will not be converted.
+                        Hover over the above text for a romanization guide.</p>
+                    <p class="infoBox">Press the <span style="color: #fa2742; font-style: normal; font-weight: normal">x</span>
+                        button beside any word to remove it from your list.</p>
+                    <p class="infoBox">You may give an existing word a new definition by typing it in the left box and putting you new definition in the right.</p>
+                </li>
+            </ul>
+        </li>
+
+    </ul>
+    </div>
 </body>
 </html>
