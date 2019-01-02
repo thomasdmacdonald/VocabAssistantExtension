@@ -3,7 +3,7 @@
 *A chrome extension meant to aid with memorizing korean vocabulary
 words by replacing desired words with Korean translations that the user enters.*
 
-##Overview
+## Overview
 To select words to be replaced, click on the extension icon in Chrome.
 
 English words can be entered in the left box and Korean translations can be
@@ -31,7 +31,7 @@ Below is a sample image of what the popup looks like in use.
 
 ![](extension/images/sample.jpg)
 
-##Storage
+## Storage
 
 All translation data is stored in the chrome local storage of your machine.
 This means you can close chrome completely and your words will be accessible
@@ -39,7 +39,7 @@ whenever you next open chrome. The information is not synced to your chrome
 account, so vocab words can only be viewed on the computer they were entered
 on.
 
-##Distribution
+## Distribution
 
 This extension is not currently available in the google chrome store, 
 however it may be in the future. 
