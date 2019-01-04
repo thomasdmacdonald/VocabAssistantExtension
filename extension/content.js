@@ -1,105 +1,81 @@
-//chrome.storage.local.clear();
-replaceFromStorage();
-prepareVocab();
+/**
+ * Content script for the extension
+ * Mainly deals with replacing words on the page
+ */
 
-let vocabWords = [];
-let removedWords = [];
-let tempVocab;
-let useTemp = false;
+replaceFromStorage();
 
 /**
- * Listen for messages from the popup
+ * Listen for messages from the popup/background script
  */
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse){
-
     /**
-     * Set the vocab words
+     * Add, update, or remove a word
      */
-    if(message.length === 1 && message[0] === 0){
-        prepareVocab();
-
-        if(vocabWords !== undefined){
-            if(useTemp){
-                for(let element of tempVocab) {
-                    vocabWords.push(element);
-                }
-                useTemp = false;
-            }
-            removeVocabWords();
-            sendResponse({list: vocabWords});
-        }
-        else{
-            if(useTemp){
-                vocabWords = tempVocab;
-                useTemp = false;
-            }
-            removeVocabWords();
-            sendResponse({list: vocabWords});
-        }
+    if (message[0] === 0 || message[0] === 1 || message[0] === 2) {
+        replaceFromArray([[message[1], message[2]]]);
     }
 
     /**
      * Clear all
      */
-    if(message.length === 1 && message[0] === 3){
-        removeAll();
-        chrome.storage.local.clear();
-        vocabWords = [];
-        removedWords = [];
-        tempVocab = [];
-        useTemp = false;
-    }
-
-    /**
-     * Add a word
-     */
-    if (typeof message === 'object' && message.length === 3 && message[2] === 0) {
-        if(!useTemp) {
-            tempVocab = [[message[0], message[1]]];
-            useTemp = true;
-        }
-        else{
-            tempVocab.push([message[0], message[1]])
-        }
-        add_vocab(message[0], message[1]);
-    }
-
-    /**
-     * Remove a Word
-     */
-    if (typeof message === 'object' && message.length === 3 && message[2] === 1) {
-        remove_vocab(message[0]);
-        removedWords.push(message[1]);
+    if(message[0] === 3){
+        replaceFromArray(message[1]);
     }
 });
 
 /**
- * Set the vocabWords to the user's current list
- * @param words current vocab words
+ * Replace words on page, using the words currently in storage
  */
-function setVocabWords(words){
-    vocabWords = words;
-}
-
-/**
- * Get user's words from storage and set them as the current vocab words
- */
-function prepareVocab(){
-    chrome.storage.local.get(['~'], function(words){
-        setVocabWords(words['~']);
+function replaceFromStorage(){
+    chrome.runtime.sendMessage([14], function(response){
+        replace(response.list);
     });
 }
 
 /**
- * Remove any words no longer needed from the list of vocab words
+ * Replace words on page based on the arguement
+ * @param words words to be replaced on page
  */
-function removeVocabWords(){
-    for(let element of removedWords) {
-        for (let i = 0; i < vocabWords.length; i++) {
-            if (vocabWords[i][1] === element) {
-                vocabWords.splice(i, 1);
+function replaceFromArray(words){
+    if(words !== []) {
+        replace(words);
+    }
+}
+
+/**
+ * Replace given words on page
+ * @param words words to be replaced
+ */
+function replace(words){
+    let nodes = getTextNodes();
+    for(let node of nodes){
+        let text = node.nodeValue;
+        for(let pair of words) {
+            let testReg = /^[A-Za-z]*$/;
+            if (testReg.test(pair[0])){
+                let regex = new RegExp('\\b'+pair[0]+'\\b', 'gi');
+                text = text.replace(regex, pair[1]);
+            }
+            else{
+                text = text.replace(pair[0], pair[1]);
             }
         }
+        node.nodeValue = text;
     }
-    removedWords = [];
+}
+
+/**
+ * Get all text nodes on a page
+ * @returns {Array} text nodes on the page
+ */
+function getTextNodes(){
+    let treeWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    let textNodes = [];
+    while(node = treeWalker.nextNode()) {
+        textNodes.push(node);
+    }
+
+    return textNodes;
 }

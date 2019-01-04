@@ -1,30 +1,24 @@
+/**
+ * Popup script
+ * Handles visuals of the popup and messaging the scripts
+ */
 constructTextBoxes();
-
-// let parameters = {
-//     active: true,
-//     currentWindow: true
-// };
 
 /**
  * Listen for button presses
  */
 document.addEventListener('DOMContentLoaded', function() {
 
+    /**
+     * Koreanize romanized input
+     */
     document.getElementById('roman').addEventListener('click', function() {
         translate(document.getElementById('kor_input').value);
     });
 
-    document.getElementById('clearAll').addEventListener('click', function(){
-        chrome.tabs.query({}, send);
-
-        function send(tabs) {
-            for (let tab of tabs) {
-                //0 parameter denotes an add action
-                chrome.tabs.sendMessage(tab.id, [3]);
-            }
-        }
-    });
-
+    /**
+     * Add a new or duplicate word
+     */
     document.getElementById('add').addEventListener('click', function() {
         let eng = eng_input.value;
         let kor = kor_input.value;
@@ -35,7 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
             let newTerm = true;
             for(let i = 0; i < nodes.length; i++){
                 if(nodes[i].childNodes[0].value === eng){
-                    removeVocab(eng, nodes[i].childNodes[1].value);
                     nodes[i].childNodes[1].value = kor;
                     newTerm = false;
                 }
@@ -43,21 +36,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if(newTerm) {
                 addTextBox(eng, kor);
+                chrome.runtime.sendMessage([10, eng, kor]);
             }
-
-            chrome.tabs.query({}, send);
-
-            function send(tabs) {
-                for (let tab of tabs) {
-                    //0 parameter denotes an add action
-                    chrome.tabs.sendMessage(tab.id, [eng, kor, 0]);
-                }
+            else{
+                chrome.runtime.sendMessage([11, eng, kor]);
             }
 
             document.getElementById('eng_input').value = "";
             document.getElementById('kor_input').value = "";
         }
 
+    });
+
+    /**
+     * Clear all entries in memory
+     */
+    document.getElementById('clearAll').addEventListener('click', function(){
+        let boxes = document.getElementById('vocab');
+        while (boxes.hasChildNodes()) {
+            boxes.removeChild(boxes.lastChild);
+        }
+        chrome.runtime.sendMessage([13]);
     });
 });
 
@@ -90,7 +89,7 @@ function addTextBox(vocab, trans){
     divide.appendChild(remove);
 
     remove.addEventListener('click', function() {
-        removeVocab(vocab, trans);
+        removeVocab(vocab);
         divide.parentNode.removeChild(divide);
     });
 
@@ -102,19 +101,12 @@ function addTextBox(vocab, trans){
  * Builds all needed HTMl elements for all words in vocab list
  */
 function constructTextBoxes(){
-    chrome.tabs.query({active: true, currentWindow: true}, function(tab){
-        chrome.tabs.sendMessage(tab[0].id, [0], function(response){
-            if(response !== undefined) {
-                if (response.list !== undefined) {
-                    for (let pair of response.list) {
-                        addTextBox(pair[0], pair[1]);
-                    }
-                }
+    chrome.runtime.sendMessage([14], function(response){
+        if (response.list !== undefined) {
+            for (let pair of response.list) {
+                addTextBox(pair[0], pair[1]);
             }
-            else{
-                //display something to tell user to open popup in a page
-            }
-        });
+        }
     });
 }
 
@@ -123,13 +115,11 @@ function constructTextBoxes(){
  * @param vocab English vocab word
  * @param trans Korean translation
  */
-function removeVocab(vocab, trans){
-    chrome.tabs.query({}, function(tabs){
-        for (let tab of tabs) {
-            chrome.tabs.sendMessage(tab.id, [vocab, trans, 1]);
-        }
-    });
+function removeVocab(vocab){
+    chrome.runtime.sendMessage([12, vocab]);
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 /**
  * Translates a romanized string and copies it to clipboard
@@ -250,7 +240,7 @@ function parseSyllable(syl){
  * @returns {boolean}   whether the syllable is valid
  */
 function valid(string){
-    return /^((?:g)|(?:gg)|(?:r)|(?:n)|(?:d)|(?:dd)|(?:l)|(?:m)|(?:b)|(?:bb)|(?:s)|(?:ss)|(?:j)|(?:jj)|(?:ch)|(?:k)|(?:t)|(?:p)|(?:h))?((?:a)|(?:ae)|(?:ya)|(?:yae)|(?:eo)|(?:e)|(?:yeo)|(?:ye)|(?:o)|(?:wa)|(?:wae)|(?:oi)|(?:yo)|(?:u)|(?:oo)|(?:weo)|(?:we)|(?:wi)|(?:yu)|(?:yoo)|(?:eu)|(?:eui)|(?:i)|(?:ee))((?:g)|(?:gg)|(?:gs)|(?:n)|(?:nj)|(?:nh)|(?:d)|(?:l)|(?:r)|(?:lg)|(?:lm)|(?:lb)|(?:ls)|(?:lt)|(?:lp)|(?:lh)|(?:m)|(?:b)|(?:bs)|(?:s)|(?:ss)|(?:ng)|(?:j)|(?:ch)|(?:k)|(?:t)|(?:p)|(?:h))?$/.test(string);
+    return /^((?:g)|(?:gg)|(?:n)|(?:d)|(?:dd)|(?:l)|(?:r)|(?:m)|(?:b)|(?:bb)|(?:pp)|(?:s)|(?:ss)|(?:j)|(?:jj)|(?:ch)|(?:k)|(?:t)|(?:p)|(?:h))?((?:a)|(?:ae)|(?:ya)|(?:yae)|(?:eo)|(?:ou)|(?:e)|(?:yeo)|(?:you)|(?:ye)|(?:o)|(?:wa)|(?:wae)|(?:oi)|(?:yo)|(?:u)|(?:oo)|(?:weo)|(?:we)|(?:wi)|(?:wee)|(?:yu)|(?:yoo)|(?:eu)|(?:eui)|(?:i)|(?:ee))((?:g)|(?:gg)|(?:gs)|(?:n)|(?:nj)|(?:nh)|(?:d)|(?:l)|(?:lg)|(?:lm)|(?:lb)|(?:ls)|(?:lt)|(?:lp)|(?:lh)|(?:r)|(?:rg)|(?:rm)|(?:rb)|(?:rs)|(?:rt)|(?:rp)|(?:rh)|(?:m)|(?:b)|(?:bs)|(?:s)|(?:ss)|(?:ng)|(?:j)|(?:ch)|(?:k)|(?:t)|(?:p)|(?:h))?$/.test(string);
 }
 
 /**
@@ -270,6 +260,7 @@ function decodeLetters(letters){
         'm': 6,
         'b': 7,
         'bb': 8,
+        'pp': 8,
         's': 9,
         'ss': 10,
         '': 11,
@@ -287,8 +278,10 @@ function decodeLetters(letters){
         'ya': 2,
         'yae': 3,
         'eo': 4,
+        'ou': 4,
         'e': 5,
         'yeo': 6,
+        'you': 6,
         'ye': 7,
         'o': 8,
         'wa': 9,
@@ -300,12 +293,13 @@ function decodeLetters(letters){
         'weo': 14,
         'we': 15,
         'wi': 16,
+        'wee': 16,
         'yu': 17,
         'yoo': 17,
         'eu': 18,
         'eui': 19,
-        'i': 20,
-        'ee': 20
+        'ee': 20,
+        'i': 20
     };
     let thirdLetter = {
         '': 0,
@@ -316,7 +310,6 @@ function decodeLetters(letters){
         'nj': 5,
         'nh': 6,
         'd': 7,
-        'r': 8,
         'l': 8,
         'lg': 9,
         'lm': 10,
@@ -325,6 +318,7 @@ function decodeLetters(letters){
         'lt': 13,
         'lp': 14,
         'lh': 15,
+        'r': 8,
         'rg': 9,
         'rm': 10,
         'rb': 11,
