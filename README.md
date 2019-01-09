@@ -43,3 +43,5 @@ on.
 
 This extension is not currently available in the google chrome store, 
 however it may be in the future. 
+
+This project is covered by the MIT license.
